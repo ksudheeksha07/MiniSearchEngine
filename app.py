@@ -11,9 +11,18 @@ app = Flask(__name__)
 
 search_history = []
 
+ENABLE_SEMANTIC_SEARCH = (
+    os.environ.get(
+        "ENABLE_SEMANTIC_SEARCH",
+        "true"
+    ).lower()
+    == "true"
+)
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+
     results = []
     semantic_results = []
     hybrid_results = []
@@ -27,28 +36,90 @@ def home():
 
     if request.method == "POST":
         query = request.form.get("query", "").strip()
+
     else:
         query = request.args.get("query", "").strip()
 
     if query:
-        documents_searched = len(search_engine.document_files)
-        query_terms = len(search_engine.clean_text(query))
+
+        documents_searched = len(
+            search_engine.document_files
+        )
+
+        query_terms = len(
+            search_engine.clean_text(query)
+        )
 
         start_time = time.perf_counter()
 
-        results = search_engine.search_results(query)
-        semantic_results = semantic_search.semantic_search(query)
-        hybrid_results = hybrid_search.hybrid_search(query)
+        # -------------------------------
+        # KEYWORD SEARCH
+        # -------------------------------
+
+        results = search_engine.search_results(
+            query
+        )
+
+        # -------------------------------
+        # SEMANTIC + HYBRID SEARCH
+        # -------------------------------
+
+        if ENABLE_SEMANTIC_SEARCH:
+
+            semantic_results = (
+                semantic_search.semantic_search(
+                    query
+                )
+            )
+
+            hybrid_results = (
+                hybrid_search.hybrid_search(
+                    query
+                )
+            )
+
+        else:
+
+            semantic_results = []
+
+            hybrid_results = (
+                hybrid_search.hybrid_search(
+                    query
+                )
+            )
+
+        # -------------------------------
+        # SEARCH TIME
+        # -------------------------------
 
         end_time = time.perf_counter()
 
-        search_time = round((end_time - start_time) * 1000, 3)
+        search_time = round(
+            (end_time - start_time) * 1000,
+            3
+        )
+
+        # -------------------------------
+        # SEARCH HISTORY
+        # -------------------------------
 
         if query not in search_history:
+
             search_history.append(query)
 
-        if not results and len(query.split()) == 1:
-            suggestion = search_engine.get_spelling_suggestion(query)
+        # -------------------------------
+        # SPELLING SUGGESTION
+        # -------------------------------
+
+        if (
+            not results
+            and len(query.split()) == 1
+        ):
+
+            suggestion = (
+                search_engine
+                .get_spelling_suggestion(query)
+            )
 
     return render_template(
         "index.html",
@@ -66,14 +137,25 @@ def home():
 
 @app.route("/suggest")
 def suggest():
-    prefix = request.args.get("q", "")
-    suggestions = search_engine.get_suggestions(prefix)
 
-    return {"suggestions": suggestions}
+    prefix = request.args.get(
+        "q",
+        ""
+    )
+
+    suggestions = (
+        search_engine
+        .get_suggestions(prefix)
+    )
+
+    return {
+        "suggestions": suggestions
+    }
 
 
 @app.route("/document/<filename>")
 def open_document(filename):
+
     return send_from_directory(
         search_engine.documents_folder,
         filename
@@ -82,11 +164,24 @@ def open_document(filename):
 
 @app.route("/clear-history")
 def clear_history():
+
     search_history.clear()
 
-    return redirect(url_for("home"))
+    return redirect(
+        url_for("home")
+    )
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )

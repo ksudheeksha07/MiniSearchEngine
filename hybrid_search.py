@@ -1,5 +1,20 @@
+import os
+
 import search_engine
 import semantic_search
+
+
+# ---------------------------------------
+# DEPLOYMENT CONFIGURATION
+# ---------------------------------------
+
+ENABLE_SEMANTIC_SEARCH = (
+    os.environ.get(
+        "ENABLE_SEMANTIC_SEARCH",
+        "true"
+    ).lower()
+    == "true"
+)
 
 
 # ---------------------------------------
@@ -32,17 +47,47 @@ def hybrid_search(
     limit=5
 ):
 
-    # -------------------------------
+    # -----------------------------------
     # KEYWORD SEARCH
-    # -------------------------------
+    # -----------------------------------
 
     keyword_results = (
         search_engine.search_results(query)
     )
 
-    # -------------------------------
+    # -----------------------------------
+    # DEPLOYMENT MODE
+    # -----------------------------------
+
+    if not ENABLE_SEMANTIC_SEARCH:
+
+        results = []
+
+        for result in keyword_results[:limit]:
+
+            results.append({
+
+                "filename": result["filename"],
+
+                "keyword_score": round(
+                    result["score"],
+                    3
+                ),
+
+                "semantic_score": 0.0,
+
+                "hybrid_score": round(
+                    result["score"],
+                    3
+                )
+
+            })
+
+        return results
+
+    # -----------------------------------
     # SEMANTIC SEARCH
-    # -------------------------------
+    # -----------------------------------
 
     semantic_results = (
         semantic_search.semantic_search(
@@ -53,9 +98,9 @@ def hybrid_search(
         )
     )
 
-    # -------------------------------
+    # -----------------------------------
     # CREATE SCORE DICTIONARIES
-    # -------------------------------
+    # -----------------------------------
 
     keyword_scores = {}
 
@@ -73,9 +118,9 @@ def hybrid_search(
             result["filename"]
         ] = result["similarity"]
 
-    # -------------------------------
+    # -----------------------------------
     # NORMALIZE KEYWORD SCORES
-    # -------------------------------
+    # -----------------------------------
 
     if keyword_scores:
 
@@ -104,9 +149,9 @@ def hybrid_search(
             max_keyword
         )
 
-    # -------------------------------
+    # -----------------------------------
     # NORMALIZE SEMANTIC SCORES
-    # -------------------------------
+    # -----------------------------------
 
     if semantic_scores:
 
@@ -135,9 +180,9 @@ def hybrid_search(
             max_semantic
         )
 
-    # -------------------------------
+    # -----------------------------------
     # COMBINE ALL DOCUMENTS
-    # -------------------------------
+    # -----------------------------------
 
     all_documents = (
         set(keyword_scores.keys())
@@ -145,9 +190,9 @@ def hybrid_search(
         set(semantic_scores.keys())
     )
 
-    # -------------------------------
+    # -----------------------------------
     # CALCULATE HYBRID SCORE
-    # -------------------------------
+    # -----------------------------------
 
     results = []
 
@@ -194,18 +239,18 @@ def hybrid_search(
 
         })
 
-    # -------------------------------
+    # -----------------------------------
     # SORT RESULTS
-    # -------------------------------
+    # -----------------------------------
 
     results.sort(
         key=lambda x: x["hybrid_score"],
         reverse=True
     )
 
-    # -------------------------------
+    # -----------------------------------
     # RETURN TOP RESULTS
-    # -------------------------------
+    # -----------------------------------
 
     return results[:limit]
 
