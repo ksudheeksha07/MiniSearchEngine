@@ -489,24 +489,15 @@ def get_spelling_suggestion(word):
 # -------------------------------
 # SEARCH SUGGESTIONS
 # -------------------------------
-
 def get_suggestions(prefix, limit=5):
-
     prefix = prefix.lower().strip(
         string.punctuation
     )
-
     if not prefix:
         return []
-
     suggestions = []
-
     for word in inverted_index:
-
         if word.startswith(prefix):
-
             suggestions.append(word)
-
     suggestions.sort()
-
     return suggestions[:limit]

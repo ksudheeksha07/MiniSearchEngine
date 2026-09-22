@@ -39,9 +39,9 @@ The project demonstrates information retrieval, natural language processing, sim
 
 ### Mobile
 
-![Machine Learning Mobile View 1](screenshots/machine-learning-mobile-1.png)
+![Machine Learning Mobile View 1](screenshots/machine-learning-mobile-1.jpeg)
 
-![Machine Learning Mobile View 2](screenshots/machine-learning-mobile-2.png) 
+![Machine Learning Mobile View 2](screenshots/machine-learning-mobile-2.jpeg) 
 
 ## 🧠 Semantic Search
 
