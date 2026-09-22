@@ -1,174 +1,175 @@
-# 🔎 Mini Search Engine
+# Mini Search Engine
 
-A lightweight search engine built with **Python and Flask** that searches across a collection of local documents using **TF-IDF, semantic search, and hybrid ranking**.
+A portfolio-ready **Mini Search Engine** built with Python and Flask that combines traditional **TF-IDF keyword search** with **semantic search** and **hybrid ranking**.
 
-The project combines traditional information retrieval with semantic similarity to provide both exact keyword matching and meaning-based document retrieval through a clean web interface.
+The project demonstrates information retrieval, natural language processing, similarity measurement, search ranking, and web application development.
+
+## 🚀 Live Demo
+
+**Live Demo:** https://mini-search-engine-qqof.onrender.com/
+
+**GitHub Repository:** https://github.com/ksudheeksha07/MiniSearchEngine
 
 ---
 
 ## ✨ Features
 
-### 🔎 Keyword Search
-
-Uses **TF-IDF-based ranking** to find documents containing terms related to the user's query.
-
-* Term Frequency (TF)
-* Inverse Document Frequency (IDF)
-* TF-IDF scoring
-* Normalized term frequency
-* Query normalization
-* Punctuation handling
-* Relevant text snippets
-
-### 🧠 Semantic Search
-
-Uses **Sentence Transformers** to convert the query and documents into semantic embeddings.
-
-The system then uses **cosine similarity** to measure how closely each document matches the meaning of the query.
-
-This allows the search engine to retrieve conceptually related documents even when the exact query words are not present.
-
-The semantic search pipeline uses:
-
-- Sentence Transformers for embeddings
-- scikit-learn for cosine similarity
-- PyTorch as the underlying deep-learning framework
-
-### 🔀 Hybrid Search
-
-Combines:
-
-* Keyword relevance
-* Semantic similarity
-
-to produce a combined ranking of documents.
-
-### ✍️ Spelling Correction
-
-The search engine can detect possible spelling mistakes and provide alternative queries.
-
-Example:
-
-```text
-macine → machine
-```
-
-### 💡 Live Search Suggestions
-
-Suggestions are generated while the user types using the indexed vocabulary.
-
-### 🕘 Search History
-
-The web application keeps track of previous searches and allows users to:
-
-* Re-run previous searches
-* Clear search history
-
-### 📊 Search Statistics
-
-Each search displays:
-
-* Search time
-* Number of documents searched
-* Number of query terms
-
-### 📱 Responsive Interface
-
-The Flask interface is designed to work across desktop and smaller screen sizes.
+* 🔎 TF-IDF keyword search
+* 🧠 Semantic search using Sentence Transformers
+* 🔀 Hybrid search combining keyword and semantic scores
+* ✍️ Spelling correction
+* 💡 Live search suggestions
+* 🕘 Search history
+* 📊 Search statistics
+* 📄 Clickable document results
+* ⚡ Search-time measurement
+* 📱 Responsive web interface
+* 🧪 Search evaluation pipeline
+* 📈 Precision, Recall, F1 and MRR evaluation
+* ☁️ Render deployment
 
 ---
 
-| Technology | Purpose |
-|---|---|
-| Python | Core programming and search algorithms |
-| Flask | Web application |
-| HTML | Page structure |
-| CSS | User interface |
-| JavaScript | Live search suggestions |
-| TF-IDF | Keyword-based information retrieval |
-| Sentence Transformers | Semantic embeddings |
-| scikit-learn | Cosine similarity |
-| PyTorch | Deep-learning backend |
-| JSON | Evaluation query data |
+## 🧠 Semantic Search
 
-## 🧠 How It Works
+The project supports semantic search using the **Sentence Transformers** model:
 
-The search engine follows a multi-stage retrieval process.
+`all-MiniLM-L6-v2`
+
+The model converts documents and queries into numerical embeddings.
+
+Cosine similarity is then used to measure how semantically similar a query is to each document.
+
+This allows the search engine to retrieve related documents even when the exact query words are not present.
+
+For example:
+
+> `machines that learn from examples`
+
+can retrieve documents related to machine learning even without requiring an exact keyword match.
+
+---
+
+## 🔀 Hybrid Search
+
+Hybrid search combines:
+
+* **Keyword search using TF-IDF**
+* **Semantic search using embeddings**
+
+The current baseline uses equal weighting:
+
+`50% Keyword + 50% Semantic`
+
+The scores are normalized before combining them.
+
+A small experiment was also performed using different hybrid weights.
+
+| Keyword | Semantic | Precision@5 | Recall@5 |  F1@5 |
+| ------- | -------- | ----------: | -------: | ----: |
+| 70%     | 30%      |       0.580 |    0.882 | 0.661 |
+| 50%     | 50%      |       0.580 |    0.882 | 0.661 |
+| 30%     | 70%      |       0.560 |    0.865 | 0.643 |
+
+The 50/50 configuration is retained as the simple balanced baseline because the evaluation did not provide a clear reason to change it.
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+
+* Python
+* Flask
+
+### Information Retrieval
+
+* TF-IDF
+* Inverted Index
+* Term Frequency
+* Inverse Document Frequency
+* Cosine Similarity
+
+### NLP / AI
+
+* Sentence Transformers
+* `all-MiniLM-L6-v2`
+* Scikit-learn
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Deployment
+
+* Gunicorn
+* Render
+
+### Development
+
+* VS Code
+* Git
+* GitHub
+
+---
+
+## ⚙️ How It Works
 
 ```text
-                User Query
-                    │
-                    ▼
-             Query Processing
-                    │
-          ┌─────────┴─────────┐
-          ▼                   ▼
-   Keyword Search       Semantic Search
-      (TF-IDF)          (Similarity)
-          │                   │
-          └─────────┬─────────┘
-                    ▼
-              Hybrid Search
-                    │
-                    ▼
-            Ranked Documents
-                    │
-                    ▼
-              Web Interface
+User Query
+     │
+     ▼
+Flask Web Application
+     │
+     ├───────────────┐
+     │               │
+     ▼               ▼
+Keyword Search   Semantic Search
+     │               │
+     │               ▼
+     │        Sentence Transformer
+     │               │
+     │               ▼
+     │        Cosine Similarity
+     │               │
+     └───────┬───────┘
+             ▼
+       Hybrid Ranking
+             │
+             ▼
+       Ranked Results
 ```
 
-### 1. Document Collection
+The search engine also provides supporting features such as:
 
-The search engine loads text files from the `documents/` directory.
+* Live suggestions
+* Spelling correction
+* Search history
+* Search statistics
 
-The current dataset contains **15 documents** covering topics such as:
+---
+
+## 📚 Dataset
+
+The search engine currently contains **15 local text documents** covering computer science and AI-related topics:
 
 * Artificial Intelligence
 * Algorithms
 * Computer Vision
 * Cybersecurity
-* Databases
+* Database
 * Data Structures
 * Deep Learning
 * Generative AI
-* IoT
+* Internet of Things
 * Networking
-* NLP
+* Natural Language Processing
 * Operating Systems
 * Programming
 * Python
 * Robotics
-
-### 2. Text Processing
-
-Documents and queries are processed before searching.
-
-The processing includes:
-
-* Converting text into normalized terms
-* Removing punctuation
-* Normalizing related word forms
-* Preparing terms for indexing and retrieval
-
-### 3. Keyword Retrieval
-
-The keyword search uses TF-IDF to determine how relevant a document is to a query.
-
-A higher TF-IDF score indicates stronger keyword relevance.
-
-### 4. Semantic Retrieval
-
-Semantic search looks beyond exact word matching and retrieves documents based on conceptual similarity.
-
-This allows related documents to appear even when the exact query terms are not strongly represented.
-
-### 5. Hybrid Ranking
-
-Hybrid search combines keyword and semantic signals to provide a more comprehensive ranking.
-
-This allows the system to benefit from both:
-
-**Exact matching + Meaning-based matching**
 
 ---
 
@@ -178,11 +179,11 @@ This allows the system to benefit from both:
 MiniSearchEngine/
 │
 ├── app.py
+├── search_engine.py
+├── semantic_search.py
 ├── hybrid_search.py
 ├── index.py
 ├── main.py
-├── search_engine.py
-├── semantic_search.py
 │
 ├── documents/
 │   ├── ai.txt
@@ -201,224 +202,145 @@ MiniSearchEngine/
 │   ├── python.txt
 │   └── robotics.txt
 │
-├── evaluation/
-│   ├── evaluate.py
-│   └── queries.json
-│
-├── tests/
-│   └── test_search.py
+├── templates/
+│   └── index.html
 │
 ├── static/
 │   └── style.css
 │
-├── templates/
-│   └── index.html
+├── evaluation/
+│   ├── evaluate.py
+│   ├── queries.json
+│   ├── results.json
+│   └── test_hybrid_weights.py
 │
-└── .vscode/
-    └── settings.json
+├── tests/
+│   └── test_search.py
+│
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## 🚀 Installation
+## 💻 Installation
 
-### 1. Clone the repository
+Clone the repository:
 
 ```bash
-git clone <your-github-repository-url>
+git clone https://github.com/ksudheeksha07/MiniSearchEngine.git
+```
+
+Move into the project directory:
+
+```bash
 cd MiniSearchEngine
 ```
 
-### 2. Create a virtual environment
+Install dependencies:
 
 ```bash
-python -m venv venv
+pip install -r requirements.txt
 ```
 
-### 3. Activate the virtual environment
-
-### Windows
-
-```powershell
-venv\Scripts\activate
-```
-
-### macOS / Linux
-
-```bash
-source venv/bin/activate
-```
-
-### 4. Install dependencies
-
-```bash
-pip install flask
-```
-
-If additional dependencies are used by the semantic-search implementation, install them according to the project's environment requirements.
-
----
-
-## ▶️ Running the Application
-
-Start the Flask application with:
+Run the Flask application:
 
 ```bash
 python app.py
 ```
 
-The application will start locally.
-
-Open the local Flask address shown in the terminal in your browser.
+Then open the local application in your browser.
 
 ---
 
-## 🔍 Example Queries
+## 🔎 Example Queries
 
-Try searches such as:
+The search engine can be tested using queries such as:
 
 ```text
 python
 machine learning
+deep learning
 computer vision
-database
-robotics
 artificial intelligence
+database
+cybersecurity
+robotics
+internet of things
+natural language processing
+programming
 ```
 
-You can also test spelling correction:
+It also supports queries containing spelling mistakes, such as:
 
 ```text
 macine
 ```
 
-The system can suggest:
-
-```text
-machine
-```
+which can provide a spelling suggestion.
 
 ---
 
 ## 🧪 Testing
 
-The project includes automated tests in the `tests/` directory.
+The application was tested using:
 
-Run:
+1. `python`
+2. `machine learning`
+3. `macine`
+4. `quantum`
+5. Live search suggestions
+6. Search history
+7. Clear history
+8. Document opening
 
-```bash
-python -m pytest
-```
-
-The `evaluation/` directory also contains:
-
-```text
-evaluate.py
-queries.json
-```
-
-which can be used to evaluate search behaviour against predefined queries.
+The document results can be opened directly from the search interface.
 
 ---
 
-## 📊 Evaluation & Results
+## 📊 Evaluation
 
-The search engine was evaluated using a local dataset containing:
-
-- **15 documents**
-- **10 evaluation queries**
-- Manually defined relevant-document labels
-
-The evaluation compares three retrieval approaches:
-
-1. TF-IDF / Keyword Search
-2. Semantic Search
-3. Hybrid Search
-
-### Evaluation Metrics
-
-- **Precision@5** — proportion of the top 5 retrieved documents that are relevant
-- **Recall@5** — proportion of relevant documents retrieved in the top 5
-- **F1@5** — harmonic mean of Precision@5 and Recall@5
-- **MRR** — Mean Reciprocal Rank of the first relevant result
-- **Average Search Time** — average retrieval time per query
+The search engine was evaluated using **10 information-retrieval queries** across the 15-document dataset.
 
 ### Results
 
-| Method | Precision@5 | Recall@5 | F1@5 | MRR | Avg. Search Time |
-|---|---:|---:|---:|---:|---:|
-| TF-IDF | 0.930 | 0.757 | 0.815 | 1.000 | 6.420 ms |
-| Semantic | 0.580 | 0.880 | 0.659 | 1.000 | 36.278 ms |
-| Hybrid | 0.580 | 0.882 | 0.661 | 1.000 | 38.178 ms |
+| Method   | Precision@5 | Recall@5 |  F1@5 |   MRR |  Avg Time |
+| -------- | ----------: | -------: | ----: | ----: | --------: |
+| TF-IDF   |       0.930 |    0.757 | 0.815 | 1.000 |  6.420 ms |
+| Semantic |       0.580 |    0.880 | 0.659 | 1.000 | 36.278 ms |
+| Hybrid   |       0.580 |    0.882 | 0.661 | 1.000 | 38.178 ms |
 
-### Interpretation
+These results are based on a small dataset of 15 documents and 10 evaluation queries, so they should not be interpreted as large-scale search-engine performance.
 
-The evaluation shows different strengths across the retrieval approaches.
+---
 
-**TF-IDF / Keyword Search**
+## ⚠️ Deployment Note
 
-- Achieved the highest Precision@5 and F1@5 on this dataset.
-- Provides substantially lower search latency.
-- Performs particularly well when query terms directly match document content.
+Semantic search is enabled during local development.
 
-**Semantic Search**
+The deployed Render version uses:
 
-- Achieved higher Recall@5 than TF-IDF.
-- Can retrieve conceptually related documents even when exact query terms are not present.
-- Requires more computation because document and query embeddings are compared.
+```text
+ENABLE_SEMANTIC_SEARCH=false
+```
 
-**Hybrid Search**
+This is because the free Render environment has limited memory, and loading the Sentence Transformer model can exceed the available memory.
 
-- Combines keyword relevance with semantic similarity.
-- Achieved Recall@5 of **0.882** on the evaluation dataset.
-- Provides a balance between lexical matching and semantic relevance.
-- Has higher latency because both retrieval approaches are executed.
+When semantic search is disabled, the application continues to provide keyword search and a hybrid-search fallback.
 
-### Hybrid Weight Experiment
+The complete semantic-search functionality remains available when running the project locally on a machine with sufficient resources.
 
-Different keyword/semantic weight combinations were also tested:
+---
 
-| Keyword Weight | Semantic Weight | Precision@5 | Recall@5 | F1@5 |
-|---:|---:|---:|---:|---:|
-| 0.7 | 0.3 | 0.580 | 0.882 | 0.661 |
-| 0.5 | 0.5 | 0.580 | 0.882 | 0.661 |
-| 0.3 | 0.7 | 0.560 | 0.865 | 0.643 |
+## 🚧 Limitations
 
-The **0.5 / 0.5 configuration** is retained as the default because it provides a simple balanced combination of keyword and semantic signals without introducing an arbitrary preference for either component.
-
-### Evaluation Limitations
-
-This evaluation is intended as a project-level experiment rather than a benchmark against large-scale search systems.
-
-The current dataset contains only **15 documents and 10 queries**, and the relevance labels were manually defined for this project. Therefore, the results should not be generalized to larger datasets.
-
-The MRR value is **1.000 for all three methods** because the first retrieved result was relevant for every evaluation query. This makes MRR less useful for distinguishing the methods on the current dataset.
-
-Future evaluation could use:
-
-- A larger document collection
-- More diverse queries
-- More difficult or ambiguous queries
-- Larger relevance judgments
-- Standard information-retrieval datasets
-- Additional metrics such as NDCG@K and MAP
-
-## 🎯 Project Goals
-
-The main goals of this project are to understand and implement fundamental concepts in information retrieval and modern search systems.
-
-Key concepts explored include:
-
-* Text preprocessing
-* Inverted indexing
-* TF-IDF
-* Document ranking
-* Semantic similarity
-* Hybrid retrieval
-* Search suggestions
-* Spelling correction
-* Search evaluation
-* Flask-based application development
+* Small local document collection
+* No web-scale crawling
+* No persistent database
+* Search history is stored in memory
+* Semantic model requires additional memory
+* Evaluation dataset is relatively small
 
 ---
 
@@ -426,42 +348,49 @@ Key concepts explored include:
 
 Possible future improvements include:
 
-* Persistent search history
-* Improved ranking algorithms
 * Larger document collections
-* Better semantic embeddings
-* Advanced query understanding
-* Search filters
-* Document upload functionality
-* Performance optimization
-* Cloud deployment
-* Improved evaluation metrics
+* Web crawling
+* Persistent search history
+* Database integration
+* Better ranking algorithms
+* Query expansion
+* More advanced NLP models
+* Personalized search
+* Larger-scale deployment
+* Improved semantic ranking
+* Automatic document indexing
+
+---
+
+## 🎯 Project Goals
+
+This project was developed to gain practical experience with:
+
+* Information Retrieval
+* Natural Language Processing
+* Machine Learning
+* Search Ranking
+* Semantic Similarity
+* Flask Web Development
+* Software Testing
+* Model Evaluation
+* Deployment
+
+It is also designed as a portfolio project demonstrating the integration of **AI/ML concepts with a functional web application**.
 
 ---
 
 ## 📌 Current Status
 
-**Project status: Completed core implementation**
+**Completed and deployed.**
 
-The current version includes:
-
-* ✅ Keyword search
-* ✅ TF-IDF ranking
-* ✅ Semantic search
-* ✅ Hybrid search
-* ✅ Spelling correction
-* ✅ Live suggestions
-* ✅ Search history
-* ✅ Search statistics
-* ✅ Responsive web interface
-* ✅ Automated tests
-* ✅ Search evaluation framework
+The project includes keyword search, semantic search, hybrid ranking, spelling correction, live suggestions, search history, statistics, evaluation, testing, responsive UI, GitHub version control, and Render deployment.
 
 ---
 
 ## 👩‍💻 Author
 
-**Sudheeksha**
+**K. Sudheeksha**
 
 CSE — Artificial Intelligence & Machine Learning
 
@@ -469,4 +398,4 @@ CSE — Artificial Intelligence & Machine Learning
 
 ## 📄 License
 
-This project is intended for educational and portfolio purposes.
+This project is available for educational and portfolio purposes.
