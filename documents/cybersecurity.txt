@@ -1,0 +1,6 @@
+Cybersecurity protects computers, networks and data from unauthorized access.
+Strong passwords help protect user accounts from attacks.
+Encryption converts information into a form that unauthorized users cannot easily read.
+Firewalls monitor and control network traffic.
+Authentication verifies the identity of a user.
+Cybersecurity helps prevent malware, phishing and other cyber attacks.

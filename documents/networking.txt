@@ -1,0 +1,6 @@
+Computer networking allows devices to communicate and share information.
+A network can connect computers, servers, phones and other devices.
+The Internet is a large network that connects computers around the world.
+TCP and UDP are important protocols used for network communication.
+IP addresses identify devices on a network.
+Routers help forward data between different networks.

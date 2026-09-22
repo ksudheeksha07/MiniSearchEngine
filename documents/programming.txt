@@ -1,0 +1,3 @@
+Programming is the process of creating instructions for computers.
+Python is a programming language.
+Programming languages are used to build software.

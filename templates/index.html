@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini Search Engine</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2>🕘 Search History</h2>
+
+        {% if history %}
+
+            <div class="history-list">
+
+                {% for item in history %}
+
+                    <a
+                        href="/?query={{ item | urlencode }}"
+                        class="history-item"
+                    >
+                        🔎 {{ item }}
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+            <a
+                href="/clear-history"
+                class="clear-history"
+            >
+                🗑️ Clear History
+            </a>
+
+        {% else %}
+
+            <p class="empty-history">
+                No searches yet.
+            </p>
+
+        {% endif %}
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+
+        <h1>🔎 Mini Search Engine</h1>
+
+        <p class="subtitle">
+            Search through your documents
+        </p>
+
+
+        <!-- SEARCH FORM -->
+        <form method="POST">
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="search-input"
+                    name="query"
+                    placeholder="Search documents, files, or keywords..."
+                    autocomplete="off"
+                    required
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+                <!-- LIVE SUGGESTIONS -->
+                <div
+                    id="suggestions"
+                    class="suggestions"
+                ></div>
+
+            </div>
+
+        </form>
+
+
+        <!-- RESULTS -->
+        {% if query %}
+
+            <h2>
+                Search results for:
+                <span>"{{ query }}"</span>
+            </h2>
+
+
+            <!-- SEARCH STATISTICS -->
+            {% if search_time is not none %}
+
+                <p class="stats">
+                    ⏱️ Search time:
+                    {{ search_time }} ms
+                    |
+                    📄 Documents searched:
+                    {{ documents_searched }}
+                    |
+                    🔤 Query terms:
+                    {{ query_terms }}
+                </p>
+
+            {% endif %}
+
+
+            <!-- SPELLING SUGGESTION -->
+            {% if suggestion %}
+
+                <div class="spelling-suggestion">
+
+                    Did you mean:
+
+                    <a href="/?query={{ suggestion | urlencode }}">
+                        {{ suggestion }}
+                    </a>?
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- KEYWORD SEARCH -->
+            <h2 class="section-title">
+                🔎 Keyword Search Results
+            </h2>
+
+            {% if results %}
+
+                <p class="result-count">
+                    {{ results|length }} result(s) found
+                </p>
+
+                {% for result in results %}
+
+                    <div class="result">
+
+                        <h3>
+                            📄
+                            <a
+                                href="{{ url_for('open_document', filename=result.filename) }}"
+                                target="_blank"
+                            >
+                                {{ result.filename }}
+                            </a>
+                        </h3>
+
+                        <p class="score">
+                            TF-IDF Score:
+                            {{ result.score }}
+                        </p>
+
+                        <p class="snippet">
+                            {{ result.snippet|safe }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="no-results">
+
+                    <h3>
+                        No keyword results found
+                    </h3>
+
+                    <p>
+                        The exact words in your query were not found.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- SEMANTIC SEARCH -->
+            {% if semantic_results %}
+
+                <hr>
+
+                <h2 class="section-title">
+                    🧠 Semantic Search Results
+                </h2>
+
+                <p class="result-count">
+                    {{ semantic_results|length }}
+                    semantically related document(s) found
+                </p>
+
+                {% for result in semantic_results %}
+
+                    <div class="result">
+
+                        <h3>
+                            📄
+                            <a
+                                href="{{ url_for('open_document', filename=result.filename) }}"
+                                target="_blank"
+                            >
+                                {{ result.filename }}
+                            </a>
+                        </h3>
+
+                        <p class="score">
+                            Semantic Similarity:
+                            {{ result.similarity }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <!-- HYBRID SEARCH -->
+            {% if hybrid_results %}
+
+                <hr>
+
+                <h2 class="section-title">
+                    🔀 Hybrid Search Results
+                </h2>
+
+                <p class="result-count">
+                    {{ hybrid_results|length }}
+                    combined results found
+                </p>
+
+                {% for result in hybrid_results %}
+
+                    <div class="result">
+
+                        <h3>
+                            📄
+                            <a
+                                href="{{ url_for('open_document', filename=result.filename) }}"
+                                target="_blank"
+                            >
+                                {{ result.filename }}
+                            </a>
+                        </h3>
+
+                        <p class="score">
+                            Hybrid Score:
+                            {{ result.hybrid_score }}
+                        </p>
+
+                        <p>
+                            🔎 Keyword Score:
+                            {{ result.keyword_score }}
+                        </p>
+
+                        <p>
+                            🧠 Semantic Score:
+                            {{ result.semantic_score }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+
+<!-- LIVE SUGGESTIONS JAVASCRIPT -->
+
+<script>
+
+const searchInput = document.getElementById("search-input");
+const suggestionsBox = document.getElementById("suggestions");
+
+
+searchInput.addEventListener("input", async function () {
+
+    const query = this.value.trim();
+
+    if (!query) {
+
+        suggestionsBox.innerHTML = "";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "/suggest?q=" + encodeURIComponent(query)
+        );
+
+        const data = await response.json();
+
+        suggestionsBox.innerHTML = "";
+
+
+        if (
+            !data.suggestions ||
+            data.suggestions.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        data.suggestions.forEach(function (suggestion) {
+
+            const item = document.createElement("div");
+
+            item.className = "suggestion-item";
+
+            item.textContent = suggestion;
+
+
+            item.addEventListener("click", function () {
+
+                searchInput.value = suggestion;
+
+                suggestionsBox.innerHTML = "";
+
+                searchInput.focus();
+
+            });
+
+
+            suggestionsBox.appendChild(item);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Suggestion error:",
+            error
+        );
+
+    }
+
+});
+
+
+document.addEventListener("click", function (event) {
+
+    if (
+        !searchInput.contains(event.target) &&
+        !suggestionsBox.contains(event.target)
+    ) {
+
+        suggestionsBox.innerHTML = "";
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>

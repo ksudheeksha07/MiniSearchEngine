@@ -1,0 +1,1 @@
+Data structures are methods for organizing and storing data so that computer programs can access and modify information efficiently. Common data structures include arrays, linked lists, stacks, queues, trees, graphs, hash tables and heaps. Choosing an appropriate data structure can improve the performance of an algorithm and reduce computational complexity.

@@ -1,0 +1,87 @@
+[
+    {
+        "query": "machine learning",
+        "relevant_documents": [
+            "ai.txt",
+            "deep_learning.txt",
+            "nlp.txt",
+            "python.txt",
+            "robotics.txt",
+            "iot.txt"
+        ]
+    },
+    {
+        "query": "deep learning",
+        "relevant_documents": [
+            "deep_learning.txt",
+            "nlp.txt",
+            "computer_vision.txt",
+            "generative_ai.txt"
+        ]
+    },
+    {
+        "query": "computer vision",
+        "relevant_documents": [
+            "computer_vision.txt",
+            "robotics.txt",
+            "deep_learning.txt"
+        ]
+    },
+    {
+        "query": "artificial intelligence",
+        "relevant_documents": [
+            "ai.txt",
+            "deep_learning.txt",
+            "computer_vision.txt",
+            "nlp.txt",
+            "robotics.txt",
+            "generative_ai.txt",
+            "iot.txt"
+        ]
+    },
+    {
+        "query": "database",
+        "relevant_documents": [
+            "database.txt"
+        ]
+    },
+    {
+        "query": "cybersecurity",
+        "relevant_documents": [
+            "cybersecurity.txt",
+            "networking.txt"
+        ]
+    },
+    {
+        "query": "robotics",
+        "relevant_documents": [
+            "robotics.txt",
+            "computer_vision.txt",
+            "ai.txt"
+        ]
+    },
+    {
+        "query": "internet of things",
+        "relevant_documents": [
+            "iot.txt",
+            "networking.txt"
+        ]
+    },
+    {
+        "query": "natural language processing",
+        "relevant_documents": [
+            "nlp.txt",
+            "ai.txt",
+            "deep_learning.txt",
+            "generative_ai.txt"
+        ]
+    },
+    {
+        "query": "programming",
+        "relevant_documents": [
+            "programming.txt",
+            "python.txt",
+            "algorithms.txt"
+        ]
+    }
+]

@@ -1,0 +1,5 @@
+An operating system manages the hardware and software of a computer.
+The operating system manages memory, processes, files and devices.
+Windows, Linux and macOS are examples of operating systems.
+Process scheduling is an important function of an operating system.
+Memory management helps programs use computer memory efficiently.
