@@ -1,6 +1,6 @@
 from pathlib import Path
+import os
 
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -14,23 +14,13 @@ documents_folder = (
 
 
 # -------------------------------
-# LOAD EMBEDDING MODEL
-# -------------------------------
-
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
-
-
-# -------------------------------
-# LOAD DOCUMENTS
+# DOCUMENT LIST
 # -------------------------------
 
 document_files = [
     file_path.name
     for file_path in documents_folder.glob("*.txt")
 ]
-
 
 documents = []
 document_names = []
@@ -49,13 +39,51 @@ for filename in document_files:
 
 
 # -------------------------------
-# CREATE DOCUMENT EMBEDDINGS
+# SEMANTIC SEARCH CONFIGURATION
 # -------------------------------
 
-document_embeddings = model.encode(
-    documents,
-    convert_to_numpy=True
+# Semantic search is enabled locally.
+# On Render, set ENABLE_SEMANTIC_SEARCH=false
+# to prevent the large ML model from loading.
+
+ENABLE_SEMANTIC_SEARCH = (
+    os.environ.get(
+        "ENABLE_SEMANTIC_SEARCH",
+        "true"
+    ).lower()
+    == "true"
 )
+
+
+model = None
+document_embeddings = None
+
+
+# -------------------------------
+# LOAD MODEL ONLY WHEN NEEDED
+# -------------------------------
+
+def load_model():
+
+    global model
+    global document_embeddings
+
+    if model is not None:
+        return
+
+    if not ENABLE_SEMANTIC_SEARCH:
+        return
+
+    from sentence_transformers import SentenceTransformer
+
+    model = SentenceTransformer(
+        "all-MiniLM-L6-v2"
+    )
+
+    document_embeddings = model.encode(
+        documents,
+        convert_to_numpy=True
+    )
 
 
 # -------------------------------
@@ -63,6 +91,11 @@ document_embeddings = model.encode(
 # -------------------------------
 
 def semantic_search(query, limit=5):
+
+    load_model()
+
+    if not ENABLE_SEMANTIC_SEARCH:
+        return []
 
     query_embedding = model.encode(
         [query],
