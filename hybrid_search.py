@@ -9,6 +9,10 @@ import semantic_search
 def normalize_score(score, min_score, max_score):
 
     if max_score == min_score:
+
+        if max_score > 0:
+            return 1.0
+
         return 0.0
 
     return (
@@ -36,7 +40,6 @@ def hybrid_search(
         search_engine.search_results(query)
     )
 
-
     # -------------------------------
     # SEMANTIC SEARCH
     # -------------------------------
@@ -50,9 +53,8 @@ def hybrid_search(
         )
     )
 
-
     # -------------------------------
-    # CREATE SCORE DICTIONARY
+    # CREATE SCORE DICTIONARIES
     # -------------------------------
 
     keyword_scores = {}
@@ -63,7 +65,6 @@ def hybrid_search(
             result["filename"]
         ] = result["score"]
 
-
     semantic_scores = {}
 
     for result in semantic_results:
@@ -71,7 +72,6 @@ def hybrid_search(
         semantic_scores[
             result["filename"]
         ] = result["similarity"]
-
 
     # -------------------------------
     # NORMALIZE KEYWORD SCORES
@@ -92,7 +92,6 @@ def hybrid_search(
         min_keyword = 0
         max_keyword = 0
 
-
     normalized_keyword_scores = {}
 
     for filename, score in keyword_scores.items():
@@ -105,17 +104,46 @@ def hybrid_search(
             max_keyword
         )
 
+    # -------------------------------
+    # NORMALIZE SEMANTIC SCORES
+    # -------------------------------
+
+    if semantic_scores:
+
+        min_semantic = min(
+            semantic_scores.values()
+        )
+
+        max_semantic = max(
+            semantic_scores.values()
+        )
+
+    else:
+
+        min_semantic = 0
+        max_semantic = 0
+
+    normalized_semantic_scores = {}
+
+    for filename, score in semantic_scores.items():
+
+        normalized_semantic_scores[
+            filename
+        ] = normalize_score(
+            score,
+            min_semantic,
+            max_semantic
+        )
 
     # -------------------------------
     # COMBINE ALL DOCUMENTS
     # -------------------------------
 
-    all_documents = set(
-        keyword_scores.keys()
-    ) | set(
-        semantic_scores.keys()
+    all_documents = (
+        set(keyword_scores.keys())
+        |
+        set(semantic_scores.keys())
     )
-
 
     # -------------------------------
     # CALCULATE HYBRID SCORE
@@ -133,19 +161,17 @@ def hybrid_search(
         )
 
         semantic_score = (
-            semantic_scores.get(
+            normalized_semantic_scores.get(
                 filename,
                 0.0
             )
         )
-
 
         hybrid_score = (
             keyword_weight * keyword_score
             +
             semantic_weight * semantic_score
         )
-
 
         results.append({
 
@@ -168,7 +194,6 @@ def hybrid_search(
 
         })
 
-
     # -------------------------------
     # SORT RESULTS
     # -------------------------------
@@ -177,7 +202,6 @@ def hybrid_search(
         key=lambda x: x["hybrid_score"],
         reverse=True
     )
-
 
     # -------------------------------
     # RETURN TOP RESULTS

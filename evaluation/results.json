@@ -1,0 +1,27 @@
+{
+    "evaluation_queries": 10,
+    "documents": 15,
+    "metrics": {
+        "TF-IDF": {
+            "precision@5": 0.93,
+            "recall@5": 0.7571428571428571,
+            "f1@5": 0.8147186147186147,
+            "mrr": 1.0,
+            "average_search_time_ms": 6.420469998556655
+        },
+        "Semantic": {
+            "precision@5": 0.58,
+            "recall@5": 0.8797619047619047,
+            "f1@5": 0.6592352092352092,
+            "mrr": 1.0,
+            "average_search_time_ms": 36.27792000188492
+        },
+        "Hybrid": {
+            "precision@5": 0.58,
+            "recall@5": 0.8821428571428571,
+            "f1@5": 0.6607503607503608,
+            "mrr": 1.0,
+            "average_search_time_ms": 38.17808000167133
+        }
+    }
+}
