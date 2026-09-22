@@ -29,6 +29,19 @@ The project demonstrates information retrieval, natural language processing, sim
 * ☁️ Render deployment
 
 ---
+## 🖥️ Screenshots
+
+### Desktop
+
+![Home Page](screenshots/home-desktop.png)
+
+![Machine Learning Search](screenshots/machine-learning-desktop.png)
+
+### Mobile
+
+![Machine Learning Mobile View 1](screenshots/machine-learning-mobile-1.png)
+
+![Machine Learning Mobile View 2](screenshots/machine-learning-mobile-2.png) 
 
 ## 🧠 Semantic Search
 
