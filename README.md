@@ -321,19 +321,87 @@ which can be used to evaluate search behaviour against predefined queries.
 
 ---
 
-## 📈 Evaluation
+## 📊 Evaluation & Results
 
-The project evaluates search behaviour across different query types, including:
+The search engine was evaluated using a local dataset containing:
 
-* Exact keyword queries
-* Multi-word queries
-* Spelling errors
-* Queries with no direct keyword matches
-* Semantically related queries
+- **15 documents**
+- **10 evaluation queries**
+- Manually defined relevant-document labels
 
-This helps compare how traditional keyword retrieval and semantic retrieval behave under different search conditions.
+The evaluation compares three retrieval approaches:
 
----
+1. TF-IDF / Keyword Search
+2. Semantic Search
+3. Hybrid Search
+
+### Evaluation Metrics
+
+- **Precision@5** — proportion of the top 5 retrieved documents that are relevant
+- **Recall@5** — proportion of relevant documents retrieved in the top 5
+- **F1@5** — harmonic mean of Precision@5 and Recall@5
+- **MRR** — Mean Reciprocal Rank of the first relevant result
+- **Average Search Time** — average retrieval time per query
+
+### Results
+
+| Method | Precision@5 | Recall@5 | F1@5 | MRR | Avg. Search Time |
+|---|---:|---:|---:|---:|---:|
+| TF-IDF | 0.930 | 0.757 | 0.815 | 1.000 | 6.420 ms |
+| Semantic | 0.580 | 0.880 | 0.659 | 1.000 | 36.278 ms |
+| Hybrid | 0.580 | 0.882 | 0.661 | 1.000 | 38.178 ms |
+
+### Interpretation
+
+The evaluation shows different strengths across the retrieval approaches.
+
+**TF-IDF / Keyword Search**
+
+- Achieved the highest Precision@5 and F1@5 on this dataset.
+- Provides substantially lower search latency.
+- Performs particularly well when query terms directly match document content.
+
+**Semantic Search**
+
+- Achieved higher Recall@5 than TF-IDF.
+- Can retrieve conceptually related documents even when exact query terms are not present.
+- Requires more computation because document and query embeddings are compared.
+
+**Hybrid Search**
+
+- Combines keyword relevance with semantic similarity.
+- Achieved Recall@5 of **0.882** on the evaluation dataset.
+- Provides a balance between lexical matching and semantic relevance.
+- Has higher latency because both retrieval approaches are executed.
+
+### Hybrid Weight Experiment
+
+Different keyword/semantic weight combinations were also tested:
+
+| Keyword Weight | Semantic Weight | Precision@5 | Recall@5 | F1@5 |
+|---:|---:|---:|---:|---:|
+| 0.7 | 0.3 | 0.580 | 0.882 | 0.661 |
+| 0.5 | 0.5 | 0.580 | 0.882 | 0.661 |
+| 0.3 | 0.7 | 0.560 | 0.865 | 0.643 |
+
+The **0.5 / 0.5 configuration** is retained as the default because it provides a simple balanced combination of keyword and semantic signals without introducing an arbitrary preference for either component.
+
+### Evaluation Limitations
+
+This evaluation is intended as a project-level experiment rather than a benchmark against large-scale search systems.
+
+The current dataset contains only **15 documents and 10 queries**, and the relevance labels were manually defined for this project. Therefore, the results should not be generalized to larger datasets.
+
+The MRR value is **1.000 for all three methods** because the first retrieved result was relevant for every evaluation query. This makes MRR less useful for distinguishing the methods on the current dataset.
+
+Future evaluation could use:
+
+- A larger document collection
+- More diverse queries
+- More difficult or ambiguous queries
+- Larger relevance judgments
+- Standard information-retrieval datasets
+- Additional metrics such as NDCG@K and MAP
 
 ## 🎯 Project Goals
 
